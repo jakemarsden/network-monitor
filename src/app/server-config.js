@@ -21,6 +21,16 @@ export default config;
  * @typedef {Object} AppConfig
  * @property {string} host
  * @property {number} port
+ * @property {AppConfig~Db} db
  * @property {Object} staticResources
  * @property {string} staticResources.dir
+ */
+
+/**
+ * @typedef {Object} AppConfig~Db
+ * @property {string} host
+ * @property {number} port
+ * @property {string} database
+ * @property {string} user
+ * @property {string} password
  */
