@@ -33,6 +33,7 @@
     },
     "dependencies": {
         "@material/typography": "0.40.1",
+        "ip-address": "5.8.9",
         "knex": "0.15.2",
         "mysql": "2.16.0",
         "object-assign-deep": "0.4.0"
