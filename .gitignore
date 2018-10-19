@@ -1,3 +1,7 @@
+# Private config (eg. DB passwords)
+*-secret.config.*
+!*-secret.config.*.placeholder
+
 # Webpack output
 dist/
 
