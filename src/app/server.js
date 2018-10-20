@@ -2,7 +2,12 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import url from 'url';
+import {DbFactory} from './db/db-factory.js';
+import {DbOperations} from './db/db-operations.js';
+import {InterfaceStatSerializer} from './domain/serialize/device-serializer.js';
+import {Serializer} from './domain/serialize/serializer.js';
 import config from './server-config.js';
+import {Service} from './service/service.js';
 
 const MIME_TYPES = {
     '.css': 'text/css',
@@ -17,6 +22,13 @@ const MIME_TYPES = {
     '.png': 'image/png'
 };
 
+let service;
+{
+    const db = new DbFactory(config.db);
+    const dbOps = new DbOperations(db);
+    service = new Service(dbOps);
+}
+
 const server = http.createServer((req, resp) => {
     console.info(`${req.method} ${req.url}`);
     try {
@@ -25,21 +37,20 @@ const server = http.createServer((req, resp) => {
         serveInternalError(req, resp, err);
     }
 });
-
 server.listen(config.port, config.host, () =>
-        console.log(`Server listening at http://${config.host}:${config.port}`));
+        console.log(`Server listening at: http://${config.host}:${config.port}`));
 
 /**
  * @param {IncomingMessage} req
  * @param {ServerResponse} resp
  */
 function serveResponse(req, resp) {
-    if (req.method !== 'GET') {
-        serveIllegalMethod(req, resp);
-        return;
-    }
     if(req.url === '/') {
         serveRedirect(req, resp, '/index.html');
+        return;
+    }
+    if (req.url.startsWith('/api')) {
+        serveApiEndpoint(req, resp);
         return;
     }
     serveStaticResource(req, resp);
@@ -49,7 +60,30 @@ function serveResponse(req, resp) {
  * @param {IncomingMessage} req
  * @param {ServerResponse} resp
  */
+function serveApiEndpoint(req, resp) {
+    if (req.url === '/api/interface-stat') {
+        if (req.method !== 'GET') {
+            serveIllegalMethod(req, resp);
+            return;
+        }
+        service.aggregateInterfaceStats(config.subnets)
+                .then(stats => serveJsonPayload(req, resp, stats, InterfaceStatSerializer.DEFAULT))
+                .catch(err => serveInternalError(req, resp, err));
+        return;
+    }
+    serveNotFound(req, resp);
+}
+
+/**
+ * @param {IncomingMessage} req
+ * @param {ServerResponse} resp
+ */
 function serveStaticResource(req, resp) {
+    if (req.method !== 'GET') {
+        serveIllegalMethod(req, resp);
+        return;
+    }
+
     const reqUrl = url.parse(req.url);
     const reqPath = path.normalize(reqUrl.pathname);
     const contentPath = path.join(config.staticResources.dir, reqPath);
@@ -76,7 +110,21 @@ function serveStaticResource(req, resp) {
 /**
  * @param {IncomingMessage} req
  * @param {ServerResponse} resp
- * @param {string}
+ * @param {T} payload
+ * @param {Serializer<T>=} serializer
+ * @template T
+ */
+function serveJsonPayload(req, resp, payload, serializer = Serializer.DEFAULT) {
+    const payloadJson = serializer.serializeJson(payload);
+    resp.writeHead(200, { 'Content-Type': 'application/json' });
+    resp.write(payloadJson);
+    resp.end();
+}
+
+/**
+ * @param {IncomingMessage} req
+ * @param {ServerResponse} resp
+ * @param {string} targetLocation
  */
 function serveRedirect(req, resp, targetLocation) {
     console.debug(`302 Redirect: ${targetLocation}`);
@@ -111,7 +159,7 @@ function serveIllegalMethod(req, resp) {
  * @param {Error=} err
  */
 function serveInternalError(req, resp, err) {
-    console.error(`500 Internal Server Error: ${req.method} ${req.url}: ${err}`);
+    console.error(`500 Internal Server Error: ${req.method} ${req.url}: ${err}${err && '\n' + err.stack}`);
     resp.writeHead(500, { 'Content-Type': 'text/plain' });
     resp.write(`500 Internal Server Error: ${err}`)
     resp.end();

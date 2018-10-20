@@ -1,3 +1,5 @@
+const Address4 = require('ip-address').Address4;
+const Address6 = require('ip-address').Address6;
 const objectAssignDeep = require('object-assign-deep');
 const path = require('path');
 const process = require('process');
@@ -15,7 +17,11 @@ const config = {
     },
     staticResources: {
         dir: path.join(process.cwd(), 'dist')
-    }
+    },
+    subnets: [
+        new Address4('10.10.0.0/16'),
+        new Address6('fe80::/10')
+    ]
 };
 
 module.exports = objectAssignDeep(config, secretConfig);
