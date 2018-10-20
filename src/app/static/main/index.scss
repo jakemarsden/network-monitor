@@ -3,4 +3,10 @@
 body.netmon {
     margin: 0;
     padding: 10px;
+
+    .interface-stats.table {
+        border-spacing: 5px 0;
+        .cell.packets { text-align: right; }
+        .cell.traffic { text-align: right; }
+    }
 }
