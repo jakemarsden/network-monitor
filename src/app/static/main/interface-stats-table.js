@@ -1,5 +1,5 @@
 import {InterfaceStat} from '../../domain/device.js';
-import {humanReadableSize} from '../../util/format.js';
+import {formatBytes, formatInteger} from '../../util/format.js';
 import {TableRow} from '../ui/table.js';
 
 /**
@@ -13,8 +13,8 @@ export class InterfaceStatsTableRow extends TableRow {
         const S = InterfaceStatsTableRow.Selector;
         this.render({
             [S.ADDRESS_CELL]: (elem, data) => elem.textContent = data.address.correctForm(),
-            [S.PACKETS_CELL]: (elem, data) => elem.textContent = data.packets,
-            [S.TRAFFIC_CELL]: (elem, data) => elem.textContent = humanReadableSize(data.traffic)
+            [S.PACKETS_CELL]: (elem, data) => elem.textContent = formatInteger(data.packets),
+            [S.TRAFFIC_CELL]: (elem, data) => elem.textContent = formatBytes(data.traffic)
         });
     }
 }

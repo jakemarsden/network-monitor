@@ -21,7 +21,6 @@ export class Service {
      * @return {Promise<Array<InterfaceStat>>}
      */
     aggregateInterfaceStats(subnets) {
-        console.debug(`${this.constructor.name}#aggregateInterfaceStats: subnets=[${subnets.map(it => it.address).join(', ')}]`);
         const promise4 = this.db_.getAggregateIpv4Flows();
         const promise6 = this.db_.getAggregateIpv6Flows();
         return Promise.all([promise4, promise6])
@@ -54,8 +53,8 @@ export class Service {
                 .filter(flow => isInSubnet(flow.destinationAddress))
                 .forEach(flow => {
                     const int = Service.getOrPutInterfaceIfAbsent_(flow.destinationAddress, interfaces);
-                    int.traffic += flow.bytesOut;
                     int.traffic += flow.bytesIn;
+                    int.traffic += flow.bytesOut;
                     int.packets += flow.packets;
                 });
         return interfaces;

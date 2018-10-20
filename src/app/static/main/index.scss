@@ -1,10 +1,15 @@
 @import '@material/typography/mdc-typography';
 
+body.mdc-typography {
+    .mono-font { font-family: 'Roboto Mono', sans-serif; }
+}
+
 body.netmon {
     margin: 0;
     padding: 10px;
 
     .interface-stats.table {
+        width: 100%;
         border-spacing: 5px 0;
         .cell.packets { text-align: right; }
         .cell.traffic { text-align: right; }
