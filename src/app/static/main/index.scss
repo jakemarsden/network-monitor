@@ -8,10 +8,16 @@ body.netmon {
     margin: 0;
     padding: 10px;
 
-    .interface-stats.table {
-        width: 100%;
-        border-spacing: 5px 0;
-        .cell.packets { text-align: right; }
-        .cell.traffic { text-align: right; }
+    .table {
+        .cell {
+            padding: 0 10px;
+            &:first-child { padding-left: 0; }
+            &:last-child { padding-right: 0; }
+
+            text-align: start;
+            &.numeric { text-align: end; }
+        }
+        .head.row .cell { padding-bottom: 5px; }
+        .foot.row .cell { padding-top: 5px; }
     }
 }

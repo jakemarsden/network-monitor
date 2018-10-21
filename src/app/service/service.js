@@ -1,6 +1,6 @@
 import {Address4, Address6} from 'ip-address';
 import {DbOperations} from '../db/db-operations.js';
-import {InterfaceStat} from '../domain/device.js';
+import {DeviceGroup, InterfaceStat} from '../domain/device.js';
 import {Flow} from '../domain/flow.js';
 import {parseIpAddress} from '../util/parse.js';
 

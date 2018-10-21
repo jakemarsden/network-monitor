@@ -34,3 +34,17 @@ export class InterfaceStat {
         return this.address.correctForm() === addr.correctForm();
     }
 }
+
+export class DeviceGroup {
+
+    constructor() {
+        /**
+         * @type {string}
+         */
+        this.name = null;
+        /**
+         * @type {Array<InterfaceStat>}
+         */
+        this.devices = null;
+    }
+}

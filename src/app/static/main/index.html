@@ -16,32 +16,39 @@
     <hr/>
 </header>
 
-<section>
-    <h2>Interface statistics</h2>
-    <table class="interface-stats table">
-        <thead>
-            <tr class="head-row">
-                <th class="cell">Name</th>
-                <th class="cell">Group</th>
-                <th class="cell">Address</th>
-                <th class="cell">Traffic</th>
-                <th class="cell">Packets</th>
-            </tr>
-        </thead>
-        <tbody>
-            <template class="row-template">
-                <tr class="row">
-                    <td class="name cell"></td>
-                    <td class="group cell"></td>
-                    <td class="address cell"></td>
-                    <td class="traffic cell mono-font"></td>
-                    <td class="packets cell mono-font"></td>
-                </tr>
-            </template>
-        </tbody>
-    </table>
+<section class="device-groups">
+    <template class="group-template">
+        <section class="group">
+            <h2 class="name"></h2>
+            <table class="device-stats table">
+                <thead>
+                    <tr class="head row">
+                        <th class="name cell">Name</th>
+                        <th class="address cell">Address</th>
+                        <th class="traffic cell numeric">Traffic</th>
+                        <th class="packets cell numeric">Packets</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr class="foot row">
+                        <th class="cell" colspan="2">Total</th>
+                        <td class="traffic cell numeric mono-font"></td>
+                        <td class="packets cell numeric mono-font"></td>
+                    </tr>
+                </tfoot>
+                <tbody></tbody>
+                <template class="row-template">
+                    <tr class="data row">
+                        <td class="name cell"></td>
+                        <td class="address cell"></td>
+                        <td class="traffic cell numeric mono-font"></td>
+                        <td class="packets cell numeric mono-font"></td>
+                    </tr>
+                </template>
+            </table>
+        </section>
+    </template>
 </section>
-
 
 </body>
 </html>
