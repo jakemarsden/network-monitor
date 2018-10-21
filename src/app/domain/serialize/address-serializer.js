@@ -1,35 +1,31 @@
-import {Address4, Address6} from 'ip-address';
+import {IpAddress} from '../ip-address.js';
 import {Serializer} from './serializer.js';
 
 /**
- * @extends {Serializer<(Address4|Address6)>}
+ * @extends {Serializer<IpAddress>}
  */
-export class AddressSerializer extends Serializer {
+export class IpAddressSerializer extends Serializer {
 
     /**
-     * @param {(Address4|Address6)} obj
+     * @param {IpAddress} obj
      * @return {any}
      * @protected
      */
     serializeBlob_(obj) {
-        return {
-            address: obj.address,
-            v4: obj.v4
-        };
+        return obj.toString();
     }
 
     /**
      * @param {any} blob
-     * @return {(Address4|Address6)}
+     * @return {IpAddress}
      * @protected
      */
     deserializeBlob_(blob) {
-        const address = blob.address;
-        return blob.v4 ? new Address4(address) : new Address6(address);
+        return IpAddress.fromString(blob);
     }
 }
 
 /**
- * @constant {Serializer<(Address4|Address6)>}
+ * @constant {Serializer<IpAddress>}
  */
-AddressSerializer.DEFAULT = new AddressSerializer();
+IpAddressSerializer.DEFAULT = new IpAddressSerializer();

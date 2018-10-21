@@ -1,23 +1,23 @@
-import {InterfaceStat} from '../../domain/device.js';
+import {Device} from '../../domain/device.js';
 import {formatBytes, formatInteger} from '../../util/format.js';
 import {Table, TableRow} from '../ui/table.js';
 
 /**
- * @extends {Table<InterfaceStat>}
+ * @extends {Table<Device>}
  */
-export class InterfaceStatTable extends Table {
+export class DeviceTable extends Table {
 
     /**
-     * @param {(function(root: !HTMLTableRowElement, data: InterfaceStat): !TableRow<InterfaceStat>)=} rowFactory
+     * @param {(function(root: !HTMLTableRowElement, data: Device): !TableRow<Device>)=} rowFactory
      * @param  {...any} args
      */
-    init(rowFactory = (root, data) => new InterfaceStatsTableRow(root, data), ...args) {
+    init(rowFactory = (root, data) => new DeviceTableRow(root, data), ...args) {
         super.init(rowFactory, ...args);
     }
 
     /**
-     * @param {!InterfaceStat} data
-     * @return {!TableRow<InterfaceStat>}
+     * @param {!Device} data
+     * @return {!TableRow<Device>}
      */
     appendRow(data) {
         const row = super.appendRow(data);
@@ -33,7 +33,7 @@ export class InterfaceStatTable extends Table {
             totalTraffic += row.data.traffic;
         });
 
-        const S = InterfaceStatTable.Selector;
+        const S = DeviceTable.Selector;
         this.root.querySelectorAll(S.TOTAL_PACKETS_CELL)
                 .forEach(elem => elem.textContent = formatInteger(totalPackets));
         this.root.querySelectorAll(S.TOTAL_TRAFFIC_CELL)
@@ -45,22 +45,22 @@ export class InterfaceStatTable extends Table {
  * @constant {Object.<string, string>}
  * @private
  */
-InterfaceStatTable.Selector = {
+DeviceTable.Selector = {
     TOTAL_PACKETS_CELL: '.foot.row .packets.cell',
     TOTAL_TRAFFIC_CELL: '.foot.row .traffic.cell'
 };
 
 /**
- * @extends {TableRow<InterfaceStat>}
+ * @extends {TableRow<Device>}
  */
-export class InterfaceStatsTableRow extends TableRow {
+export class DeviceTableRow extends TableRow {
 
     initDom() {
         super.initDom();
 
-        const S = InterfaceStatsTableRow.Selector;
+        const S = DeviceTableRow.Selector;
         this.render({
-            [S.ADDRESS_CELL]: (elem, data) => elem.textContent = data.address.correctForm(),
+            [S.ADDRESS_CELL]: (elem, data) => elem.textContent = data.address.toString(),
             [S.GROUP_CELL]: (elem, data) => elem.textContent = data.group || '',
             [S.NAME_CELL]: (elem, data) => elem.textContent = data.name || '',
             [S.PACKETS_CELL]: (elem, data) => elem.textContent = formatInteger(data.packets),
@@ -73,7 +73,7 @@ export class InterfaceStatsTableRow extends TableRow {
  * @constant {Object.<string, string>}
  * @private
  */
-InterfaceStatsTableRow.Selector = {
+DeviceTableRow.Selector = {
     ADDRESS_CELL: '.cell.address',
     GROUP_CELL: '.cell.group',
     NAME_CELL: '.cell.name',

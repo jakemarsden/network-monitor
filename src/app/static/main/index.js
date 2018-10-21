@@ -1,5 +1,5 @@
-import {DeviceGroup, InterfaceStat} from '../../domain/device.js';
-import {InterfaceStatSerializer} from '../../domain/serialize/device-serializer.js';
+import {Device, DeviceGroup} from '../../domain/device.js';
+import {DeviceSerializer} from '../../domain/serialize/device-serializer.js';
 import {ajax} from '../../util/ajax.js';
 import {Page} from '../ui/page.js';
 import {DeviceGroupsUi} from './device-group-ui.js';
@@ -13,12 +13,12 @@ class MainPage extends Page {
     init(...args) {
         super.init(...args);
         /**
-         * @constant {Serializer<InterfaceStat>}
+         * @constant {Serializer<Device>}
          * @private
          */
-        this.interfaceStatSerializer_ = InterfaceStatSerializer.DEFAULT;
+        this.deviceSerializer_ = DeviceSerializer.DEFAULT;
         /**
-         * @constant {Promise<Array<InterfaceStat>>}
+         * @constant {Promise<Array<Device>>}
          * @private
          */
         this.deviceGroups_ = this.fetchDeviceGroups_();
@@ -58,15 +58,15 @@ class MainPage extends Page {
         const opts = {
             headers: { 'Accept': 'application/json' },
             method: 'GET',
-            url: '/api/interface-stat',
+            url: '/api/device-stat',
         };
         return ajax(opts)
-                .then(response => this.interfaceStatSerializer_.deserializeJson(response.text))
+                .then(response => this.deviceSerializer_.deserializeJson(response.text))
                 .then(devices => this.aggregateDeviceGroups_(devices));
     }
 
     /**
-     * @param {Array<InterfaceStat>} devices
+     * @param {Array<Device>} devices
      * @return {Array<DeviceGroup>}
      * @private
      */

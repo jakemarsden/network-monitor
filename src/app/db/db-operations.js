@@ -1,5 +1,5 @@
-import {Address4, Address6} from 'ip-address';
 import {Flow} from '../domain/flow.js';
+import {IpAddress} from '../domain/ip-address.js';
 import {DbFactory} from './db-factory.js';
 
 export class DbOperations {
@@ -62,8 +62,8 @@ export class DbOperations {
      */
     parseIpv4Flow_(row) {
         const flow = new Flow();
-        flow.sourceAddress = Address4.fromInteger(row.ip_src_addr);
-        flow.destinationAddress = Address4.fromInteger(row.ip_dst_addr);
+        flow.source = IpAddress.fromInteger(row.ip_src_addr, IpAddress.Type.IPv4);
+        flow.destination = IpAddress.fromInteger(row.ip_dst_addr, IpAddress.Type.IPv4);
         flow.bytesIn = row.in_bytes;
         flow.bytesOut = row.out_bytes;
         flow.packets = row.packets;
@@ -82,8 +82,8 @@ export class DbOperations {
      */
     parseIpv6Flow_(row) {
         const flow = new Flow();
-        flow.sourceAddress = new Address6(row.ip_src_addr);
-        flow.destinationAddress = new Address6(row.ip_dst_addr);
+        flow.source = IpAddress.fromString(row.ip_src_addr, IpAddress.Type.IPv6);
+        flow.destination = IpAddress.fromString(row.ip_dst_addr, IpAddress.Type.IPv6);
         flow.bytesIn = row.in_bytes;
         flow.bytesOut = row.out_bytes;
         flow.packets = row.packets;

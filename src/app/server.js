@@ -4,7 +4,8 @@ import path from 'path';
 import url from 'url';
 import {DbFactory} from './db/db-factory.js';
 import {DbOperations} from './db/db-operations.js';
-import {InterfaceStatSerializer} from './domain/serialize/device-serializer.js';
+import {IpAddress} from './domain/ip-address.js';
+import {DeviceSerializer} from './domain/serialize/device-serializer.js';
 import {Serializer} from './domain/serialize/serializer.js';
 import config from './server-config.js';
 import {Service} from './service/service.js';
@@ -38,7 +39,7 @@ const server = http.createServer((req, resp) => {
     }
 });
 server.listen(config.port, config.host, () =>
-        console.log(`Server listening at: http://${config.host}:${config.port}`));
+        console.info(`Server listening at: http://${config.host}:${config.port}`));
 
 /**
  * @param {IncomingMessage} req
@@ -61,13 +62,14 @@ function serveResponse(req, resp) {
  * @param {ServerResponse} resp
  */
 function serveApiEndpoint(req, resp) {
-    if (req.url === '/api/interface-stat') {
+    if (req.url === '/api/device-stat') {
         if (req.method !== 'GET') {
             serveIllegalMethod(req, resp);
             return;
         }
-        service.aggregateInterfaceStats(config.subnets)
-                .then(stats => serveJsonPayload(req, resp, stats, InterfaceStatSerializer.DEFAULT))
+        const subnets = config.subnets.map(subnet => IpAddress.fromString(subnet));
+        service.aggregateDeviceStats(subnets)
+                .then(stats => serveJsonPayload(req, resp, stats, DeviceSerializer.DEFAULT))
                 .catch(err => serveInternalError(req, resp, err));
         return;
     }
@@ -161,7 +163,7 @@ function serveIllegalMethod(req, resp) {
 function serveInternalError(req, resp, err) {
     console.error(`500 Internal Server Error: ${req.method} ${req.url}: ${err}${err && '\n' + err.stack}`);
     resp.writeHead(500, { 'Content-Type': 'text/plain' });
-    resp.write(`500 Internal Server Error: ${err}`)
+    resp.write(`500 Internal Server Error: ${err}${err && '\n' + err.stack}`)
     resp.end();
 }
 

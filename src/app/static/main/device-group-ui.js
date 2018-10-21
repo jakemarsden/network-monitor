@@ -1,6 +1,6 @@
 import {DeviceGroup} from '../../domain/device.js';
 import {UiComponent} from '../ui/ui.js';
-import {InterfaceStatTable, InterfaceStatsTableRow} from './interface-stats-table.js';
+import {DeviceTable} from './device-table.js';
 
 export class DeviceGroupUi extends UiComponent {
 
@@ -25,7 +25,7 @@ export class DeviceGroupUi extends UiComponent {
          * @constant {InterfaceStatTable}
          * @private
          */
-        this.deviceTable_ = new InterfaceStatTable(this.root.querySelector(S.DEVICE_TABLE));
+        this.deviceTable_ = new DeviceTable(this.root.querySelector(S.DEVICE_TABLE));
 
         this.populateDeviceTable();
     }

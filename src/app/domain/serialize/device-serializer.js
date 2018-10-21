@@ -1,15 +1,15 @@
-import {Address4, Address6} from 'ip-address';
-import {InterfaceStat} from '../device.js';
-import {AddressSerializer} from './address-serializer.js';
+import {Device} from '../device.js';
+import {IpAddress} from '../ip-address.js';
+import {IpAddressSerializer} from './address-serializer.js';
 import {Serializer} from './serializer.js';
 
 /**
- * @extends {Serializer<InterfaceStat>}
+ * @extends {Serializer<Device>}
  */
-export class InterfaceStatSerializer extends Serializer {
+export class DeviceSerializer extends Serializer {
 
     /**
-     * @param {Serializer<(Address4|Address6)>} addressSerializer
+     * @param {Serializer<IpAddress>} addressSerializer
      */
     constructor(addressSerializer) {
         super();
@@ -17,7 +17,7 @@ export class InterfaceStatSerializer extends Serializer {
     }
 
     /**
-     * @param {InterfaceStat} obj
+     * @param {Device} obj
      * @return {any}
      * @protected
      */
@@ -33,11 +33,11 @@ export class InterfaceStatSerializer extends Serializer {
 
     /**
      * @param {any} blob
-     * @return {InterfaceStat}
+     * @return {Device}
      * @protected
      */
     deserializeBlob_(blob) {
-        const obj = new InterfaceStat();
+        const obj = new Device();
         obj.name = blob.name;
         obj.group = blob.group;
         obj.address = this.addressSerializer_.deserializeBlob(blob.address);
@@ -48,6 +48,6 @@ export class InterfaceStatSerializer extends Serializer {
 }
 
 /**
- * @constant {Serializer<InterfaceStat>}
+ * @constant {Serializer<Device>}
  */
-InterfaceStatSerializer.DEFAULT = new InterfaceStatSerializer(AddressSerializer.DEFAULT);
+DeviceSerializer.DEFAULT = new DeviceSerializer(IpAddressSerializer.DEFAULT);

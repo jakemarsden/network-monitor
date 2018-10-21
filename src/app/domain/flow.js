@@ -1,16 +1,16 @@
-import {Address4, Address6} from 'ip-address';
+import {IpAddress} from './ip-address.js';
 
 export class Flow {
 
     constructor() {
         /**
-         * @type {(Address4|Address6)}
+         * @type {IpAddress}
          */
-        this.sourceAddress = null;
+        this.source = null;
         /**
-         * @type {(Address4|Address6)}
+         * @type {IpAddress}
          */
-        this.destinationAddress = null;
+        this.destination = null;
         /**
          * @type {number}
          */

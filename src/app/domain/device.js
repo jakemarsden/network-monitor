@@ -1,6 +1,6 @@
-import {Address4, Address6} from 'ip-address';
+import {IpAddress} from './ip-address.js';
 
-export class InterfaceStat {
+export class Device {
 
     constructor() {
         /**
@@ -12,7 +12,7 @@ export class InterfaceStat {
          */
         this.group = null;
         /**
-         * @type {(Address4|Address6)}
+         * @type {IpAddress}
          */
         this.address = null;
         /**
@@ -25,14 +25,6 @@ export class InterfaceStat {
          */
         this.packets = 0;
     }
-
-    /**
-     * @param {(Address4|Address6)} addr
-     * @return {boolean}
-     */
-    hasAddress(addr) {
-        return this.address.correctForm() === addr.correctForm();
-    }
 }
 
 export class DeviceGroup {
@@ -43,7 +35,7 @@ export class DeviceGroup {
          */
         this.name = null;
         /**
-         * @type {Array<InterfaceStat>}
+         * @type {Array<Device>}
          */
         this.devices = null;
     }
