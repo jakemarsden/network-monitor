@@ -1,6 +1,6 @@
 import {Device} from '../device.js';
 import {IpAddress} from '../ip-address.js';
-import {IpAddressSerializer} from './address-serializer.js';
+import {IpAddressSerializer} from './ip-address-serializer.js';
 import {Serializer} from './serializer.js';
 
 /**
