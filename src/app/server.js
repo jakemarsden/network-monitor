@@ -2,12 +2,11 @@ import fs from 'fs';
 import http from 'http';
 import path from 'path';
 import url from 'url';
+import config from './config/config.js';
 import {DbFactory} from './db/db-factory.js';
 import {DbOperations} from './db/db-operations.js';
-import {IpAddress} from './domain/ip-address.js';
 import {DeviceSerializer} from './domain/serialize/device-serializer.js';
 import {Serializer} from './domain/serialize/serializer.js';
-import config from './server-config.js';
 import {Service} from './service/service.js';
 
 const MIME_TYPES = {
@@ -38,8 +37,8 @@ const server = http.createServer((req, resp) => {
         serveInternalError(req, resp, err);
     }
 });
-server.listen(config.port, config.host, () =>
-        console.info(`Server listening at: http://${config.host}:${config.port}`));
+server.listen(config.server.port, config.server.host, () =>
+        console.info(`Server listening at: http://${config.server.host}:${config.server.port}`));
 
 /**
  * @param {IncomingMessage} req
@@ -67,8 +66,7 @@ function serveApiEndpoint(req, resp) {
             serveIllegalMethod(req, resp);
             return;
         }
-        const subnets = config.subnets.map(subnet => IpAddress.fromString(subnet));
-        service.aggregateDeviceStats(subnets)
+        service.aggregateDeviceStats(config.subnets)
                 .then(stats => serveJsonPayload(req, resp, stats, DeviceSerializer.DEFAULT))
                 .catch(err => serveInternalError(req, resp, err));
         return;
@@ -88,7 +86,7 @@ function serveStaticResource(req, resp) {
 
     const reqUrl = url.parse(req.url);
     const reqPath = path.normalize(reqUrl.pathname);
-    const contentPath = path.join(config.staticResources.dir, reqPath);
+    const contentPath = path.join(config.server.publicResourcesDir, reqPath);
 
     fs.lstat(contentPath, (err, stat) => {
         if (err != null) {

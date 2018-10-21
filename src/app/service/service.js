@@ -7,8 +7,8 @@ export class Service {
 
     /**
      * @param {DbOperations} db
-     * @param {Object.<string, string>} deviceGroups
-     * @param {Object.<string, string>} deviceLabels
+     * @param {Map<IpAddress, string>} deviceGroups
+     * @param {Map<IpAddress, string>} deviceLabels
      */
     constructor(db, deviceGroups, deviceLabels) {
         /**
@@ -17,12 +17,12 @@ export class Service {
          */
         this.db_ = db;
         /**
-         * @constant {Object.<string, string>}
+         * @constant {Map<IpAddress, string>}
          * @private
          */
         this.deviceGroups_ = deviceGroups;
         /**
-         * @constant {Object.<string, string>}
+         * @constant {Map<IpAddress, string>}
          * @private
          */
         this.deviceLabels_ = deviceLabels;
@@ -94,8 +94,8 @@ export class Service {
      */
     findAddressGroup_(address) {
         let group;
-        for (const [groupSubnet, groupName] of Object.entries(this.deviceGroups_)) {
-            if (address.isInSubnet(IpAddress.fromString(groupSubnet))) {
+        for (const [groupSubnet, groupName] of this.deviceGroups_.entries()) {
+            if (address.isInSubnet(groupSubnet)) {
                 group = groupName;
             }
         }
@@ -108,8 +108,8 @@ export class Service {
      */
     findAddressLabel_(address) {
         let label;
-        for (const [deviceAddress, deviceLabel] of Object.entries(this.deviceLabels_)) {
-            if (address.isInSubnet(IpAddress.fromString(deviceAddress))) {
+        for (const [deviceAddress, deviceLabel] of this.deviceLabels_.entries()) {
+            if (address.isInSubnet(deviceAddress)) {
                 label = deviceLabel;
             }
         }
