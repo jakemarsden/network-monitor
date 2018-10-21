@@ -30,6 +30,6 @@ export class AddressSerializer extends Serializer {
 }
 
 /**
- * @constant {AddressSerializer}
+ * @constant {Serializer<(Address4|Address6)>}
  */
 AddressSerializer.DEFAULT = new AddressSerializer();
