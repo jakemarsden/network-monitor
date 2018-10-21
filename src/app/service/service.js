@@ -2,18 +2,31 @@ import {Address4, Address6} from 'ip-address';
 import {DbOperations} from '../db/db-operations.js';
 import {InterfaceStat} from '../domain/device.js';
 import {Flow} from '../domain/flow.js';
+import {parseIpAddress} from '../util/parse.js';
 
 export class Service {
 
     /**
      * @param {DbOperations} db
+     * @param {Object.<string, string>} deviceGroups
+     * @param {Object.<string, string>} deviceLabels
      */
-    constructor(db) {
+    constructor(db, deviceGroups, deviceLabels) {
         /**
          * @constant {DbOperations}
          * @private
          */
         this.db_ = db;
+        /**
+         * @constant {Object.<string, string>}
+         * @private
+         */
+        this.deviceGroups_ = deviceGroups;
+        /**
+         * @constant {Object.<string, string>}
+         * @private
+         */
+        this.deviceLabels_ = deviceLabels;
     }
 
     /**
@@ -44,7 +57,7 @@ export class Service {
         flows
                 .filter(flow => isInSubnet(flow.sourceAddress))
                 .forEach(flow => {
-                    const int = Service.getOrPutInterfaceIfAbsent_(flow.sourceAddress, interfaces);
+                    const int = this.getOrPutInterfaceIfAbsent_(flow.sourceAddress, interfaces);
                     int.traffic += flow.bytesIn;
                     int.traffic += flow.bytesOut;
                     int.packets += flow.packets;
@@ -52,7 +65,7 @@ export class Service {
         flows
                 .filter(flow => isInSubnet(flow.destinationAddress))
                 .forEach(flow => {
-                    const int = Service.getOrPutInterfaceIfAbsent_(flow.destinationAddress, interfaces);
+                    const int = this.getOrPutInterfaceIfAbsent_(flow.destinationAddress, interfaces);
                     int.traffic += flow.bytesIn;
                     int.traffic += flow.bytesOut;
                     int.packets += flow.packets;
@@ -66,13 +79,43 @@ export class Service {
      * @return {InterfaceStat}
      * @private
      */
-    static getOrPutInterfaceIfAbsent_(address, interfaces) {
+    getOrPutInterfaceIfAbsent_(address, interfaces) {
         let int = interfaces.find(int => int.hasAddress(address));
         if (int === undefined) {
             int = new InterfaceStat();
+            int.name = this.findAddressLabel_(address) || null;
+            int.group = this.findAddressGroup_(address) || null;
             int.address = address;
             interfaces.push(int);
         }
         return int;
+    }
+
+    /**
+     * @param {(Address4|Address6)} address
+     * @return {(string|undefined)}
+     */
+    findAddressGroup_(address) {
+        let group;
+        for (const [groupSubnet, groupName] of Object.entries(this.deviceGroups_)) {
+            if (address.isInSubnet(parseIpAddress(groupSubnet))) {
+                group = groupName;
+            }
+        }
+        return group;
+    }
+
+    /**
+     * @param {(Address4|Address6)} address
+     * @return {(string|undefined)}
+     */
+    findAddressLabel_(address) {
+        let label;
+        for (const [deviceAddress, deviceLabel] of Object.entries(this.deviceLabels_)) {
+            if (address.isInSubnet(parseIpAddress(deviceAddress))) {
+                label = deviceLabel;
+            }
+        }
+        return label;
     }
 }

@@ -26,7 +26,7 @@ let service;
 {
     const db = new DbFactory(config.db);
     const dbOps = new DbOperations(db);
-    service = new Service(dbOps);
+    service = new Service(dbOps, config.deviceGroups, config.deviceLabels);
 }
 
 const server = http.createServer((req, resp) => {

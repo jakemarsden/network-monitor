@@ -23,6 +23,8 @@ export class InterfaceStatSerializer extends Serializer {
      */
     serializeBlob_(obj) {
         return {
+            name: obj.name,
+            group: obj.group,
             address: this.addressSerializer_.serializeBlob(obj.address),
             traffic: obj.traffic,
             packets: obj.packets
@@ -36,6 +38,8 @@ export class InterfaceStatSerializer extends Serializer {
      */
     deserializeBlob_(blob) {
         const obj = new InterfaceStat();
+        obj.name = blob.name;
+        obj.group = blob.group;
         obj.address = this.addressSerializer_.deserializeBlob(blob.address);
         obj.traffic = blob.traffic;
         obj.packets = blob.packets;

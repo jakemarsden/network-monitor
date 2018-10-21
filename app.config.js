@@ -18,9 +18,15 @@ const config = {
     staticResources: {
         dir: path.join(process.cwd(), 'dist')
     },
+    deviceGroups: null,
+    deviceLabels: null,
     subnets: [
-        new Address4('10.10.0.0/16'),
-        new Address6('fe80::/10')
+        new Address6('fc00::/7'),       // IPv6 Unique Local Addresses (ULAs)
+        new Address6('fe80::/10'),      // IPv6 Link-Local
+        new Address4('10.0.0.0/8'),     // IPv4 Class A private
+        new Address4('169.254.0.0/16'), // IPv4 Automatic Private IP Addressing (APIPA)
+        new Address4('172.16.0.0/12'),  // IPv4 Class B private
+        new Address4('192.168.0.0/16')  // IPv4 Class C private
     ]
 };
 

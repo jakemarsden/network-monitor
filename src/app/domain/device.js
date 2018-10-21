@@ -4,6 +4,14 @@ export class InterfaceStat {
 
     constructor() {
         /**
+         * @type {string} name
+         */
+        this.name = null;
+        /**
+         * @type {string} group
+         */
+        this.group = null;
+        /**
          * @type {(Address4|Address6)}
          */
         this.address = null;
