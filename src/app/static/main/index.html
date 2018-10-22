@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Network Monitor</title>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,500" rel="stylesheet"/>
 
 </head>
 <body class="netmon mdc-typography">
@@ -14,7 +13,6 @@
 <header class="header">
     <h1 class="title">Network Monitor</h1>
 </header>
-<hr/>
 
 <section class="control">
     <div class="start-datetime datetime-field">
@@ -30,39 +28,39 @@
         <input id="netmon__control__end-datetime__time" class="input time" type="time" step="60"/>
     </div>
 </section>
-<hr/>
 
 <section class="device-groups">
     <template class="group-template">
         <section class="group">
-            <h2 class="name"></h2>
-            <table class="device-stats table">
-                <thead>
-                    <tr class="head row">
-                        <th class="name cell">Name</th>
-                        <th class="address cell">Address</th>
-                        <th class="traffic cell numeric">Traffic</th>
-                        <th class="packets cell numeric">Packets</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr class="foot row">
-                        <th class="cell" colspan="2">Total</th>
-                        <td class="traffic cell numeric mono-font"></td>
-                        <td class="packets cell numeric mono-font"></td>
-                    </tr>
-                </tfoot>
-                <tbody></tbody>
-                <template class="row-template">
-                    <tr class="data row">
-                        <td class="name cell"></td>
-                        <td class="address cell"></td>
-                        <td class="traffic cell numeric mono-font"></td>
-                        <td class="packets cell numeric mono-font"></td>
-                    </tr>
-                </template>
-            </table>
-            <hr/>
+            <h3 class="name"></h3>
+            <div class="table-wrapper">
+                <table class="device-stats table">
+                    <thead>
+                        <tr class="head row">
+                            <th class="name cell">Name</th>
+                            <th class="address cell">Address</th>
+                            <th class="traffic cell numeric">Traffic</th>
+                            <th class="packets cell numeric">Packets</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr class="foot row">
+                            <th class="cell" colspan="2">Total</th>
+                            <td class="traffic cell numeric"></td>
+                            <td class="packets cell numeric"></td>
+                        </tr>
+                    </tfoot>
+                    <tbody></tbody>
+                    <template class="row-template">
+                        <tr class="data row">
+                            <td class="name cell"></td>
+                            <td class="address cell"></td>
+                            <td class="traffic cell numeric"></td>
+                            <td class="packets cell numeric"></td>
+                        </tr>
+                    </template>
+                </table>
+            </div>
         </section>
     </template>
 </section>

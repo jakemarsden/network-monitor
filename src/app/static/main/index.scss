@@ -1,12 +1,18 @@
 @import '@material/typography/mdc-typography';
 
 body.mdc-typography {
-    .mono-font { font-family: 'Roboto Mono', sans-serif; }
+    @include mdc-typography(body1);
+    table { @include mdc-typography(body2); }
+    h1 { @include mdc-typography(headline3); }
+    h2 { @include mdc-typography(headline4); }
+    h3 { @include mdc-typography(headline5); }
+    h4 { @include mdc-typography(headline6); }
+    h3 { border-bottom: 2px solid gray; }
 }
 
 body.netmon {
     margin: 0;
-    padding: 10px;
+    padding: 20px;
 
     .datetime-field {
         display: flex;
@@ -27,7 +33,20 @@ body.netmon {
         }
     }
 
+    .device-groups {
+        display: flex;
+        flex-flow: row wrap;
+
+        margin: 0 -15px;
+        .group {
+            flex: 0 0 auto;
+            max-width: calc(100% - 2 * 15px);
+            margin: 0 15px;
+        }
+    }
+
     .table {
+        width: 100%;
         .cell {
             padding: 0 10px;
             &:first-child { padding-left: 0; }
@@ -38,5 +57,7 @@ body.netmon {
         }
         .head.row .cell { padding-bottom: 5px; }
         .foot.row .cell { padding-top: 5px; }
+        .data.row .cell { white-space: nowrap; }
     }
+    .table-wrapper { overflow-x: auto; }
 }

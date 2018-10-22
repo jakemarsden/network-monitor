@@ -90,7 +90,10 @@ class MainPage extends Page {
         const groups = this.fetchDeviceGroups_(interval);
         const groupsUi = this.deviceGroupsUi_;
         groupsUi.clearGroups();
-        groups.then(groups => groups.forEach(group => groupsUi.appendGroup(group)));
+        groups.then(groups => {
+            groupsUi.clearGroups();
+            groups.forEach(group => groupsUi.appendGroup(group))
+        });
     }
 
     /**
