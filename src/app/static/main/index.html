@@ -30,6 +30,35 @@
 </section>
 
 <section class="device-groups">
+    <section class="summary group">
+        <h3 class="name">Summary</h3>
+        <div class="table-wrapper">
+            <table class="group-stats table">
+                <thead>
+                    <tr class="head row">
+                        <th class="name cell">Group</th>
+                        <th class="traffic cell numeric">Traffic</th>
+                        <th class="packets cell numeric">Packets</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr class="foot row">
+                        <th class="cell">Total</th>
+                        <td class="traffic cell numeric"></td>
+                        <td class="packets cell numeric"></td>
+                    </tr>
+                </tfoot>
+                <tbody></tbody>
+                <template class="row-template">
+                    <tr class="data row">
+                        <td class="name cell"></td>
+                        <td class="traffic cell numeric"></td>
+                        <td class="packets cell numeric"></td>
+                    </tr>
+                </template>
+            </table>
+        </div>
+    </section>
     <template class="group-template">
         <section class="group">
             <h3 class="name"></h3>
