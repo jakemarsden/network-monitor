@@ -1,5 +1,5 @@
-import fs from 'fs';
-import http from 'http';
+import fs, {ReadStream} from 'fs';
+import http, {IncomingMessage, OutgoingHttpHeaders, ServerResponse} from 'http';
 import path from 'path';
 import url from 'url';
 import config from './config/config.js';
@@ -30,7 +30,6 @@ let service;
 }
 
 const server = http.createServer((req, resp) => {
-    console.info(`${req.method} ${req.url}`);
     try {
         serveResponse(req, resp);
     } catch (err) {
@@ -45,7 +44,7 @@ server.listen(config.server.port, config.server.host, () =>
  * @param {ServerResponse} resp
  */
 function serveResponse(req, resp) {
-    if(req.url === '/') {
+    if (req.url === '/') {
         serveRedirect(req, resp, '/index.html');
         return;
     }
@@ -101,9 +100,7 @@ function serveStaticResource(req, resp) {
         }
         const contentStream = fs.createReadStream(contentPath);
         const contentType = parseContentType(reqPath);
-        contentStream.on('open', () => resp.writeHead(200, { 'Content-Type': contentType }));
-        contentStream.on('error', err => serveInternalError(req, resp, err));
-        contentStream.pipe(resp);
+        serveStream(req, resp, 200, 'OK', { 'Content-Type': contentType }, contentStream);
     });
 }
 
@@ -116,9 +113,7 @@ function serveStaticResource(req, resp) {
  */
 function serveJsonPayload(req, resp, payload, serializer = Serializer.DEFAULT) {
     const payloadJson = serializer.serializeJson(payload);
-    resp.writeHead(200, { 'Content-Type': 'application/json' });
-    resp.write(payloadJson);
-    resp.end();
+    serve(req, resp, 200, 'OK', { 'Content-Type': 'application/json' }, payloadJson);
 }
 
 /**
@@ -127,9 +122,7 @@ function serveJsonPayload(req, resp, payload, serializer = Serializer.DEFAULT) {
  * @param {string} targetLocation
  */
 function serveRedirect(req, resp, targetLocation) {
-    console.debug(`302 Redirect: ${targetLocation}`);
-    resp.writeHead(302, { 'Location': targetLocation });
-    resp.end();
+    serve(req, resp, 308, 'Permanent Redirect', { 'Location': targetLocation }, undefined, targetLocation);
 }
 
 /**
@@ -137,10 +130,7 @@ function serveRedirect(req, resp, targetLocation) {
  * @param {ServerResponse} resp
  */
 function serveNotFound(req, resp) {
-    console.warn(`404 Not Found: ${req.method} ${req.url}`);
-    resp.writeHead(404, { 'Content-Type': 'text/plain' });
-    resp.write('404 Not Found');
-    resp.end();
+    serveError(req, resp, 404, 'Not Found');
 }
 
 /**
@@ -148,20 +138,86 @@ function serveNotFound(req, resp) {
  * @param {ServerResponse} resp
  */
 function serveIllegalMethod(req, resp) {
-    console.warn(`405 Method Not Allowed: ${req.method} ${req.url}`);
-    resp.writeHead(405, { 'Content-Type': 'text/plain' });
-    resp.write(`405 Method Not Allowed: '${req.method}'`);
+    serveError(req, resp, 405, 'Method Not Allowed', req.method);
 }
 
 /**
  * @param {IncomingMessage} req
  * @param {ServerResponse} resp
- * @param {Error=} err
+ * @param {(Error|string)=} err
  */
 function serveInternalError(req, resp, err) {
-    console.error(`500 Internal Server Error: ${req.method} ${req.url}: ${err}${err && '\n' + err.stack}`);
-    resp.writeHead(500, { 'Content-Type': 'text/plain' });
-    resp.write(`500 Internal Server Error: ${err}${err && '\n' + err.stack}`)
+    serveError(req, resp, 500, 'Internal Server Error', err);
+}
+
+/**
+ * @param {!IncomingMessage} req
+ * @param {!ServerResponse} resp
+ * @param {number} statusCode
+ * @param {string} statusMsg
+ * @param {OutgoingHttpHeaders=} headers
+ * @param {!ReadStream} stream
+ * @param {(Error|string)=} logMsg
+ */
+function serveStream(req, resp, statusCode, statusMsg, headers = {}, stream, logMsg = undefined) {
+    stream.on('close', () => serve(req, resp, statusCode, statusMsg, headers, undefined, logMsg));
+    stream.on('error', err => serveInternalError(req, resp, err));
+    stream.pipe(resp);
+}
+
+/**
+ * @param {!IncomingMessage} req
+ * @param {!ServerResponse} resp
+ * @param {number} statusCode
+ * @param {string} statusMsg
+ * @param {(Error|string)=} err
+ */
+function serveError(req, resp, statusCode, statusMsg, err = undefined) {
+    let msg = `${statusCode} ${statusMsg}`;
+    if (err !== undefined && err.stack) {
+        msg += `:\n  ${err.stack}`;
+    } else if (err !== undefined) {
+        msg += `: ${err}`;
+    }
+    serve(req, resp, statusCode, statusMsg, { 'Content-Type': 'text/plain' }, msg, err);
+}
+
+/**
+ * @param {!IncomingMessage} req
+ * @param {!ServerResponse} resp
+ * @param {number} statusCode
+ * @param {string} statusMsg
+ * @param {OutgoingHttpHeaders=} headers
+ * @param {any=} body
+ * @param {(Error|string)=} logMsg
+ */
+function serve(req, resp, statusCode, statusMsg, headers = {}, body = undefined, logMsg = undefined) {
+    let msg = `${statusCode} ${statusMsg}`;
+    if (statusCode >= 200 && statusCode < 300 && headers['Content-Type']) {
+        msg += ` [${headers['Content-Type']}]`;
+    }
+    if (logMsg !== undefined && logMsg.stack) {
+        msg += `:\n  ${logMsg.stack}`;
+    } else if (logMsg !== undefined) {
+        msg += `: ${logMsg}`;
+    }
+
+    let logger = console.info;
+    if (statusCode >= 300 && statusCode < 400) {
+        logger = console.debug;
+    }
+    if (statusCode >= 400 && statusCode < 500) {
+        logger = console.warn;
+    }
+    if (statusCode >= 500 && statusCode < 600) {
+        logger = console.error;
+    }
+    logger(`${req.method} ${req.url} -> ${msg}`);
+
+    resp.writeHead(statusCode, statusMsg, headers);
+    if (body !== undefined) {
+        resp.write(body);
+    }
     resp.end();
 }
 
