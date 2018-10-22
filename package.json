@@ -36,6 +36,7 @@
         "filesize": "3.6.1",
         "ip-address": "5.8.9",
         "knex": "0.15.2",
+        "luxon": "1.4.4",
         "mysql": "2.16.0",
         "nanoajax": "0.4.3",
         "object-assign-deep": "0.4.0"

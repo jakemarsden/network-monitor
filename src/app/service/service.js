@@ -1,3 +1,4 @@
+import {Interval} from 'luxon';
 import {DbOperations} from '../db/db-operations.js';
 import {Device} from '../domain/device.js';
 import {Flow} from '../domain/flow.js';
@@ -30,11 +31,12 @@ export class Service {
 
     /**
      * @param {Array<IpAddress>} subnets
+     * @param {Interval} interval
      * @return {Promise<Array<Device>>}
      */
-    aggregateDeviceStats(subnets) {
-        const promise4 = this.db_.getAggregateIpv4Flows();
-        const promise6 = this.db_.getAggregateIpv6Flows();
+    aggregateDeviceStats(subnets, interval) {
+        const promise4 = this.db_.getAggregateIpv4Flows(interval);
+        const promise6 = this.db_.getAggregateIpv6Flows(interval);
         return Promise.all([promise4, promise6])
                 .then(([flows4, flows6]) => [...flows4, ...flows6])
                 .then(flows => this.aggregateDeviceStats_(flows, subnets));

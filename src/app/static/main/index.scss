@@ -8,6 +8,25 @@ body.netmon {
     margin: 0;
     padding: 10px;
 
+    .datetime-field {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+
+        margin: 8px;
+
+        .date.label {
+            min-width: 40px;
+            padding-right: 8px;
+            text-align: start;
+        }
+        .time.label {
+            padding-left: 8px;
+            padding-right: 8px;
+            text-align: center;
+        }
+    }
+
     .table {
         .cell {
             padding: 0 10px;

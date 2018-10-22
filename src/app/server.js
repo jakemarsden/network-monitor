@@ -1,7 +1,8 @@
 import fs, {ReadStream} from 'fs';
 import http, {IncomingMessage, OutgoingHttpHeaders, ServerResponse} from 'http';
+import {Interval} from 'luxon';
 import path from 'path';
-import url from 'url';
+import url, {UrlWithParsedQuery} from 'url';
 import config from './config/config.js';
 import {DbFactory} from './db/db-factory.js';
 import {DbOperations} from './db/db-operations.js';
@@ -60,17 +61,38 @@ function serveResponse(req, resp) {
  * @param {ServerResponse} resp
  */
 function serveApiEndpoint(req, resp) {
-    if (req.url === '/api/device-stat') {
-        if (req.method !== 'GET') {
-            serveIllegalMethod(req, resp);
-            return;
-        }
-        service.aggregateDeviceStats(config.subnets)
-                .then(stats => serveJsonPayload(req, resp, stats, DeviceSerializer.DEFAULT))
-                .catch(err => serveInternalError(req, resp, err));
+    const reqUrl = url.parse(req.url, true);
+    switch (reqUrl.pathname) {
+        case '/api/device-stat':
+            serveDeviceStatApiEndpoint(req, reqUrl, resp);
+            break;
+        default:
+            serveNotFound(req, resp);
+    }
+}
+
+/**
+ * @param {IncomingMessage} req
+ * @param {UrlWithParsedQuery} reqUrl
+ * @param {ServerResponse} resp
+ */
+function serveDeviceStatApiEndpoint(req, reqUrl, resp) {
+    if (req.method !== 'GET') {
+        serveIllegalMethod(req, resp);
         return;
     }
-    serveNotFound(req, resp);
+
+    const reqInterval = reqUrl.query.interval;
+    const interval = Interval.fromISO(reqInterval);
+    if (!interval.isValid) {
+        const msg = `Illegal or missing query parameter 'interval' (${interval.invalidReason}): '${reqInterval}'`;
+        serveBadRequest(req, resp, new TypeError(msg));
+        return;
+    }
+
+    service.aggregateDeviceStats(config.subnets, interval)
+            .then(stats => serveJsonPayload(req, resp, stats, DeviceSerializer.DEFAULT))
+            .catch(err => serveInternalError(req, resp, err));
 }
 
 /**
@@ -123,6 +145,15 @@ function serveJsonPayload(req, resp, payload, serializer = Serializer.DEFAULT) {
  */
 function serveRedirect(req, resp, targetLocation) {
     serve(req, resp, 308, 'Permanent Redirect', { 'Location': targetLocation }, undefined, targetLocation);
+}
+
+/**
+ * @param {IncomingMessage} req
+ * @param {ServerResponse} resp
+ * @param {(Error|string)=} err
+ */
+function serveBadRequest(req, resp, err) {
+    serveError(req, resp, 400, 'Bad Request', err);
 }
 
 /**

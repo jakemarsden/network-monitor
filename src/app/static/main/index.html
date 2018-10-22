@@ -13,8 +13,24 @@
 
 <header class="header">
     <h1 class="title">Network Monitor</h1>
-    <hr/>
 </header>
+<hr/>
+
+<section class="control">
+    <div class="start-datetime datetime-field">
+        <label for="netmon__control__start-datetime__date" class="label date">From </label>
+        <input id="netmon__control__start-datetime__date" class="input date" type="date" step="1"/>
+        <label for="netmon__control__start-datetime__time" class="label time"> at </label>
+        <input id="netmon__control__start-datetime__time" class="input time" type="time" step="60"/>
+    </div>
+    <div class="end-datetime datetime-field">
+        <label for="netmon__control__end-datetime__date" class="label date">To </label>
+        <input id="netmon__control__end-datetime__date" class="input date" type="date" step="1"/>
+        <label for="netmon__control__end-datetime__time" class="label time"> at </label>
+        <input id="netmon__control__end-datetime__time" class="input time" type="time" step="60"/>
+    </div>
+</section>
+<hr/>
 
 <section class="device-groups">
     <template class="group-template">
@@ -46,6 +62,7 @@
                     </tr>
                 </template>
             </table>
+            <hr/>
         </section>
     </template>
 </section>
