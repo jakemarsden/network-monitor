@@ -1,7 +1,10 @@
 sudo: false
 language: node_js
+node_js:
+  - node
 before_install:
   - export TZ=Pacific/Auckland
+  - npm install --global npm@latest
 install:
   - npm ci
 script:

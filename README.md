@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.com/jakemarsden/network-monitor.svg?branch=master)](https://travis-ci.com/jakemarsden/network-monitor)
-
-# Network monitor
+# Network monitor [![Build Status](https://travis-ci.com/jakemarsden/network-monitor.svg?branch=master)](https://travis-ci.com/jakemarsden/network-monitor)
 
 A simple web application for viewing information gathered by [ntopng](https://github.com/ntop/ntopng).
 
