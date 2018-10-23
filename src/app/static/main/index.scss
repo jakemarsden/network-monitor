@@ -54,10 +54,11 @@ body.netmon {
 
             text-align: start;
             &.numeric { text-align: end; }
+
+            white-space: nowrap;
         }
         .head.row .cell { padding-bottom: 5px; }
         .foot.row .cell { padding-top: 5px; }
-        .data.row .cell { white-space: nowrap; }
     }
     .table-wrapper { overflow-x: auto; }
 }
