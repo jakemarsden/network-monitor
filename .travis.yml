@@ -1,0 +1,8 @@
+sudo: false
+language: node_js
+before_install:
+  - export TZ=Pacific/Auckland
+install:
+  - npm ci
+script:
+  - npm run build

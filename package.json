@@ -5,6 +5,10 @@
     "author": "Jake Marsden",
     "private": true,
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jakemarsden/network-monitor.git"
+    },
     "main": "src/app/server.js",
     "scripts": {
         "build": "webpack --progress",
